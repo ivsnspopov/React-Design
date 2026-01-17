@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { motion, useInView, useMotionValue, useSpring, useTransform, AnimatePresence } from 'motion/react';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 import { Navigation } from '@/app/components/Navigation';
 import { PropertyCard } from '@/app/components/PropertyCard';
@@ -11,16 +11,39 @@ import { LoadingScreen } from '@/app/components/LoadingScreen';
 import { TestimonialsSection } from '@/app/components/Testimonials';
 import { PressLogosSection } from '@/app/components/PressLogos';
 import { AvailabilityCalendar } from '@/app/components/AvailabilityCalendar';
+import { useRouter } from '@/app/context/RouterContext';
+import { LondonPage } from '@/app/pages/LondonPage';
+import { FrancePage } from '@/app/pages/FrancePage';
+import { PropertyPage } from '@/app/pages/PropertyPage';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
+  const { currentRoute } = useRouter();
 
   useEffect(() => {
     // Simulate initial load
     const timer = setTimeout(() => setIsLoading(false), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentRoute]);
+
+  const renderPage = () => {
+    switch (currentRoute) {
+      case 'london':
+        return <LondonPage />;
+      case 'france':
+        return <FrancePage />;
+      case 'property':
+        return <PropertyPage />;
+      default:
+        return <HomePage />;
+    }
+  };
 
   return (
     <>
@@ -29,21 +52,39 @@ export default function App() {
         <CustomCursor />
         <FilmGrain />
         <Navigation />
-        <HeroSection />
-        <PressLogosSection />
-        <BrandIntroduction />
-        <SectionDivider withOrnament className="py-8" />
-        <DestinationsSection />
-        <FeaturedProperties />
-        <BookingSection />
-        <PhilosophySection />
-        <TestimonialsSection />
-        <SectionDivider withOrnament className="py-8" />
-        <JournalSection />
-        <SectionDivider className="py-8" />
-        <NewsletterSection />
-        <Footer />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentRoute}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {renderPage()}
+          </motion.div>
+        </AnimatePresence>
       </div>
+    </>
+  );
+}
+
+function HomePage() {
+  return (
+    <>
+      <HeroSection />
+      <PressLogosSection />
+      <BrandIntroduction />
+      <SectionDivider withOrnament className="py-8" />
+      <DestinationsSection />
+      <FeaturedProperties />
+      <BookingSection />
+      <PhilosophySection />
+      <TestimonialsSection />
+      <SectionDivider withOrnament className="py-8" />
+      <JournalSection />
+      <SectionDivider className="py-8" />
+      <NewsletterSection />
+      <Footer />
     </>
   );
 }
@@ -277,16 +318,18 @@ function DestinationsSection() {
   const franceRef = useRef(null);
   const londonInView = useInView(londonRef, { once: true, amount: 0.3 });
   const franceInView = useInView(franceRef, { once: true, amount: 0.3 });
+  const { navigate } = useRouter();
 
   return (
-    <section className="grid md:grid-cols-2 h-auto md:h-screen">
+    <section id="destinations" className="grid md:grid-cols-2 h-auto md:h-screen">
       {/* London */}
       <motion.div
         ref={londonRef}
         initial={{ opacity: 0 }}
         animate={londonInView ? { opacity: 1 } : {}}
         transition={{ duration: 0.8 }}
-        className="relative h-[80vh] md:h-full overflow-hidden group"
+        className="relative h-[80vh] md:h-full overflow-hidden group cursor-pointer"
+        onClick={() => navigate('london')}
       >
         <motion.img
           whileHover={{ scale: 1.05 }}
@@ -324,6 +367,7 @@ function DestinationsSection() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="border border-[#2C3E50] text-[#B8C5D0] px-8 py-3 text-xs uppercase tracking-[0.15em] hover:bg-[#2C3E50] hover:text-[#F5F5F0] transition-all duration-300 group/btn"
             style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}
+            onClick={(e) => { e.stopPropagation(); navigate('london'); }}
           >
             Explore
             <ArrowRight className="inline-block ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -337,7 +381,8 @@ function DestinationsSection() {
         initial={{ opacity: 0 }}
         animate={franceInView ? { opacity: 1 } : {}}
         transition={{ duration: 0.8 }}
-        className="relative h-[80vh] md:h-full overflow-hidden group"
+        className="relative h-[80vh] md:h-full overflow-hidden group cursor-pointer"
+        onClick={() => navigate('france')}
       >
         <motion.img
           whileHover={{ scale: 1.05 }}
@@ -375,6 +420,7 @@ function DestinationsSection() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="border border-[#A0522D] text-[#D4C4B0] px-8 py-3 text-xs uppercase tracking-[0.15em] hover:bg-[#A0522D] hover:text-[#F5F5F0] transition-all duration-300 group/btn"
             style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}
+            onClick={(e) => { e.stopPropagation(); navigate('france'); }}
           >
             Explore
             <ArrowRight className="inline-block ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
