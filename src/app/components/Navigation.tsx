@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Instagram, Facebook, Linkedin } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useMagneticEffect } from './CustomCursor';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -115,16 +116,19 @@ export function Navigation() {
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
 
-          {/* Book Now Button - Desktop */}
-          <button
-            ref={magneticButton.ref}
-            onMouseMove={magneticButton.onMouseMove}
-            onMouseLeave={magneticButton.onMouseLeave}
-            className="hidden md:block border border-[#C9A86C] text-[#C9A86C] px-6 py-2 text-xs uppercase tracking-[0.15em] hover:bg-[#C9A86C] hover:text-[#0D0D0D] transition-all duration-300"
-            style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}
-          >
-            Book Now
-          </button>
+          {/* Theme Toggle & Book Now Button - Desktop */}
+          <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
+            <button
+              ref={magneticButton.ref}
+              onMouseMove={magneticButton.onMouseMove}
+              onMouseLeave={magneticButton.onMouseLeave}
+              className="border border-[#C9A86C] text-[#C9A86C] px-6 py-2 text-xs uppercase tracking-[0.15em] hover:bg-[#C9A86C] hover:text-[#0D0D0D] transition-all duration-300"
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}
+            >
+              Book Now
+            </button>
+          </div>
         </div>
       </motion.nav>
 

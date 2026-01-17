@@ -7,25 +7,91 @@ import { ArticleCard } from '@/app/components/ArticleCard';
 import { CustomCursor } from '@/app/components/CustomCursor';
 import { FilmGrain, SectionDivider, DiamondOrnament } from '@/app/components/Decorations';
 import { SplitText, GradientText, BlurReveal } from '@/app/components/AnimatedText';
+import { LoadingScreen } from '@/app/components/LoadingScreen';
+import { TestimonialsSection } from '@/app/components/Testimonials';
+import { PressLogosSection } from '@/app/components/PressLogos';
+import { AvailabilityCalendar } from '@/app/components/AvailabilityCalendar';
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    // Simulate initial load
+    const timer = setTimeout(() => setIsLoading(false), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="bg-[#0D0D0D] min-h-screen overflow-x-hidden">
-      <CustomCursor />
-      <FilmGrain />
-      <Navigation />
-      <HeroSection />
-      <BrandIntroduction />
-      <SectionDivider withOrnament className="py-8" />
-      <DestinationsSection />
-      <FeaturedProperties />
-      <PhilosophySection />
-      <SectionDivider withOrnament className="py-8" />
-      <JournalSection />
-      <SectionDivider className="py-8" />
-      <NewsletterSection />
-      <Footer />
-    </div>
+    <>
+      <LoadingScreen isLoading={isLoading} onLoadingComplete={() => setShowContent(true)} />
+      <div className={`bg-[var(--obsidian)] min-h-screen overflow-x-hidden transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+        <CustomCursor />
+        <FilmGrain />
+        <Navigation />
+        <HeroSection />
+        <PressLogosSection />
+        <BrandIntroduction />
+        <SectionDivider withOrnament className="py-8" />
+        <DestinationsSection />
+        <FeaturedProperties />
+        <BookingSection />
+        <PhilosophySection />
+        <TestimonialsSection />
+        <SectionDivider withOrnament className="py-8" />
+        <JournalSection />
+        <SectionDivider className="py-8" />
+        <NewsletterSection />
+        <Footer />
+      </div>
+    </>
+  );
+}
+
+function BookingSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
+
+  return (
+    <section ref={ref} id="booking" className="py-32 md:py-48 px-6 bg-[var(--charcoal)]">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <div className="text-xs uppercase tracking-[0.2em] text-[var(--champagne)] mb-4" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
+            PLAN YOUR STAY
+          </div>
+          <h2 className="text-4xl md:text-5xl text-[var(--pearl)] mb-4" style={{ fontFamily: 'var(--font-display)', fontWeight: 400 }}>
+            Check Availability
+          </h2>
+          <p className="text-[var(--silver)] max-w-xl mx-auto" style={{ fontFamily: 'var(--font-body)' }}>
+            Select your dates to discover our curated properties and begin your extraordinary journey.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex justify-center"
+        >
+          <AvailabilityCalendar 
+            pricePerNight={850}
+            currency="£"
+            unavailableDates={[
+              new Date('2025-02-14'),
+              new Date('2025-02-15'),
+              new Date('2025-02-16'),
+              new Date('2025-03-01'),
+              new Date('2025-03-02'),
+            ]}
+          />
+        </motion.div>
+      </div>
+    </section>
   );
 }
 

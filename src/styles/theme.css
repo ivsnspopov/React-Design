@@ -118,6 +118,51 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
+.light {
+  /* Arivé Collection Light Palette */
+  --obsidian: #FDFCFA;      /* Ivory background */
+  --charcoal: #F5F5F0;      /* Pearl cards */
+  --graphite: #E5E5E0;      /* Light borders */
+  --slate: #8A8A8A;         /* Muted text */
+  --silver: #4A4A4A;        /* Body text */
+  --pearl: #0D0D0D;         /* Headlines (dark) */
+  --ivory: #0D0D0D;
+  --champagne: #A68B4D;     /* Darker gold for contrast */
+  --burnished-gold: #8B7355;
+  --antique-brass: #6B5A45;
+  
+  /* Legacy theme variables */
+  --background: #FDFCFA;
+  --foreground: #0D0D0D;
+  --card: #F5F5F0;
+  --card-foreground: #0D0D0D;
+  --popover: #FDFCFA;
+  --popover-foreground: #0D0D0D;
+  --primary: #0D0D0D;
+  --primary-foreground: #FDFCFA;
+  --secondary: #E5E5E0;
+  --secondary-foreground: #0D0D0D;
+  --muted: #E5E5E0;
+  --muted-foreground: #8A8A8A;
+  --accent: #F5F5F0;
+  --accent-foreground: #0D0D0D;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #E5E5E0;
+  --switch-background: #cbced4;
+  --ring: #8A8A8A;
+  --sidebar: #F5F5F0;
+  --sidebar-foreground: #0D0D0D;
+  --sidebar-primary: #0D0D0D;
+  --sidebar-primary-foreground: #F5F5F0;
+  --sidebar-accent: #E5E5E0;
+  --sidebar-accent-foreground: #0D0D0D;
+  --sidebar-border: #E5E5E0;
+  --sidebar-ring: #8A8A8A;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
