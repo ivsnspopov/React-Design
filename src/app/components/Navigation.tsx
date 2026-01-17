@@ -3,12 +3,14 @@ import { Menu, X, Instagram, Facebook, Linkedin } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useMagneticEffect } from './CustomCursor';
 import { ThemeToggle } from './ThemeToggle';
+import { useRouter } from '@/app/context/RouterContext';
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const magneticButton = useMagneticEffect<HTMLButtonElement>(0.3);
+  const { navigate, currentRoute } = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,12 +56,12 @@ export function Navigation() {
   }, []);
 
   const menuItems = [
-    { label: 'Home', href: '#', sectionId: '' },
-    { label: 'London', href: '#london', sectionId: 'london' },
-    { label: 'South of France', href: '#france', sectionId: 'france' },
-    { label: 'Properties', href: '#properties', sectionId: 'properties' },
-    { label: 'Journal', href: '#journal', sectionId: 'journal' },
-    { label: 'Contact', href: '#contact', sectionId: 'contact' }
+    { label: 'Home', route: 'home' as const, isPage: true },
+    { label: 'London', route: 'london' as const, isPage: true },
+    { label: 'South of France', route: 'france' as const, isPage: true },
+    { label: 'Journal', route: 'journal' as const, isPage: true },
+    { label: 'About', route: 'about' as const, isPage: true },
+    { label: 'Contact', route: 'contact' as const, isPage: true }
   ];
 
   return (
@@ -74,24 +76,23 @@ export function Navigation() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-20 py-6 flex items-center justify-between">
           {/* Logo */}
-          <a 
-            href="#" 
-            className={`text-[#C9A86C] tracking-[0.15em] transition-all duration-300 ${isScrolled ? 'text-xs' : 'text-sm'}`} 
+          <button 
+            onClick={() => navigate('home')}
+            className={`text-[#C9A86C] tracking-[0.15em] transition-all duration-300 bg-transparent border-none cursor-pointer ${isScrolled ? 'text-xs' : 'text-sm'}`} 
             style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}
           >
             THE ARIVÉ COLLECTION
-          </a>
+          </button>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
             {menuItems.map((item) => {
-              const isActive = activeSection === item.sectionId || 
-                (item.sectionId === '' && activeSection === '' && window.scrollY < 100);
+              const isActive = currentRoute === item.route;
               return (
-                <a
+                <button
                   key={item.label}
-                  href={item.href}
-                  className="relative text-xs uppercase tracking-[0.1em] transition-colors group"
+                  onClick={() => navigate(item.route)}
+                  className="relative text-xs uppercase tracking-[0.1em] transition-colors group bg-transparent border-none cursor-pointer"
                   style={{ 
                     fontFamily: 'var(--font-body)',
                     color: isActive ? '#C9A86C' : '#F5F5F0'
@@ -102,7 +103,7 @@ export function Navigation() {
                     className="absolute bottom-[-2px] left-0 w-full h-[1px] bg-[#C9A86C] transition-transform duration-300 ease-out origin-left scale-x-0 group-hover:scale-x-100"
                     style={{ transform: isActive ? 'scaleX(1)' : undefined }}
                   />
-                </a>
+                </button>
               );
             })}
           </div>
@@ -144,18 +145,17 @@ export function Navigation() {
           >
             <div className="flex flex-col items-center justify-center h-full gap-8 px-6">
               {menuItems.map((item, index) => (
-                <motion.a
+                <motion.button
                   key={item.label}
-                  href={item.href}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl uppercase tracking-[0.15em] text-[#F5F5F0] hover:text-[#C9A86C] transition-colors"
+                  onClick={() => { navigate(item.route); setIsMenuOpen(false); }}
+                  className="text-2xl uppercase tracking-[0.15em] text-[#F5F5F0] hover:text-[#C9A86C] transition-colors bg-transparent border-none cursor-pointer"
                   style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}
                 >
                   {item.label}
-                </motion.a>
+                </motion.button>
               ))}
 
               <motion.div

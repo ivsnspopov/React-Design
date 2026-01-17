@@ -15,6 +15,10 @@ import { useRouter } from '@/app/context/RouterContext';
 import { LondonPage } from '@/app/pages/LondonPage';
 import { FrancePage } from '@/app/pages/FrancePage';
 import { PropertyPage } from '@/app/pages/PropertyPage';
+import { JournalPage } from '@/app/pages/JournalPage';
+import { ArticlePage } from '@/app/pages/ArticlePage';
+import { ContactPage } from '@/app/pages/ContactPage';
+import { AboutPage } from '@/app/pages/AboutPage';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +44,14 @@ export default function App() {
         return <FrancePage />;
       case 'property':
         return <PropertyPage />;
+      case 'journal':
+        return <JournalPage />;
+      case 'article':
+        return <ArticlePage />;
+      case 'contact':
+        return <ContactPage />;
+      case 'about':
+        return <AboutPage />;
       default:
         return <HomePage />;
     }
@@ -759,6 +771,78 @@ function NewsletterSection() {
   );
 }
 
+function FooterLinks() {
+  const { navigate } = useRouter();
+  
+  const footerSections = [
+    {
+      title: 'Stays',
+      links: [
+        { label: 'London', route: 'london' as const },
+        { label: 'France', route: 'france' as const },
+      ]
+    },
+    {
+      title: 'Company',
+      links: [
+        { label: 'About', route: 'about' as const },
+        { label: 'Journal', route: 'journal' as const },
+      ]
+    },
+    {
+      title: 'Connect',
+      links: [
+        { label: 'Contact', route: 'contact' as const },
+      ]
+    },
+    {
+      title: 'Follow',
+      links: [
+        { label: 'Instagram', href: 'https://instagram.com' },
+        { label: 'Facebook', href: 'https://facebook.com' },
+        { label: 'LinkedIn', href: 'https://linkedin.com' },
+      ]
+    }
+  ];
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-16">
+      {footerSections.map((section) => (
+        <div key={section.title}>
+          <h4 className="text-xs uppercase tracking-[0.15em] text-[#F5F5F0] mb-4" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
+            {section.title}
+          </h4>
+          <ul className="space-y-2">
+            {section.links.map((link) => (
+              <li key={link.label}>
+                {'route' in link ? (
+                  <button
+                    onClick={() => navigate(link.route)}
+                    className="text-sm text-[#8A8A8A] hover:text-[#F5F5F0] transition-colors bg-transparent border-none cursor-pointer p-0"
+                    style={{ fontFamily: 'var(--font-body)' }}
+                  >
+                    {link.label}
+                  </button>
+                ) : (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-[#8A8A8A] hover:text-[#F5F5F0] transition-colors"
+                    style={{ fontFamily: 'var(--font-body)' }}
+                  >
+                    {link.label}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function Footer() {
   return (
     <footer className="bg-[#0D0D0D] px-6 md:px-20 pt-24 pb-12">
@@ -787,67 +871,7 @@ function Footer() {
         <div className="border-t border-[#2D2D2D] mb-12" />
 
         {/* Footer Links */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-16">
-          <div>
-            <h4 className="text-xs uppercase tracking-[0.15em] text-[#F5F5F0] mb-4" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
-              Stays
-            </h4>
-            <ul className="space-y-2">
-              {['London', 'France', 'All Properties'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-[#8A8A8A] hover:text-[#F5F5F0] transition-colors" style={{ fontFamily: 'var(--font-body)' }}>
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-xs uppercase tracking-[0.15em] text-[#F5F5F0] mb-4" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
-              Company
-            </h4>
-            <ul className="space-y-2">
-              {['About', 'Journal', 'Careers'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-[#8A8A8A] hover:text-[#F5F5F0] transition-colors" style={{ fontFamily: 'var(--font-body)' }}>
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-xs uppercase tracking-[0.15em] text-[#F5F5F0] mb-4" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
-              Connect
-            </h4>
-            <ul className="space-y-2">
-              {['Contact', 'Enquire', 'Newsletter'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-[#8A8A8A] hover:text-[#F5F5F0] transition-colors" style={{ fontFamily: 'var(--font-body)' }}>
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-xs uppercase tracking-[0.15em] text-[#F5F5F0] mb-4" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
-              Follow
-            </h4>
-            <ul className="space-y-2">
-              {['Instagram', 'Facebook', 'LinkedIn'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-[#8A8A8A] hover:text-[#F5F5F0] transition-colors" style={{ fontFamily: 'var(--font-body)' }}>
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <FooterLinks />
 
         <div className="border-t border-[#2D2D2D] pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#4A4A4A]" style={{ fontFamily: 'var(--font-body)' }}>
