@@ -1,20 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'motion/react';
+import { motion, useInView, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 import { Navigation } from '@/app/components/Navigation';
 import { PropertyCard } from '@/app/components/PropertyCard';
 import { ArticleCard } from '@/app/components/ArticleCard';
+import { CustomCursor } from '@/app/components/CustomCursor';
+import { FilmGrain, SectionDivider, DiamondOrnament } from '@/app/components/Decorations';
+import { SplitText, GradientText, BlurReveal } from '@/app/components/AnimatedText';
 
 export default function App() {
   return (
     <div className="bg-[#0D0D0D] min-h-screen overflow-x-hidden">
+      <CustomCursor />
+      <FilmGrain />
       <Navigation />
       <HeroSection />
       <BrandIntroduction />
+      <SectionDivider withOrnament className="py-8" />
       <DestinationsSection />
       <FeaturedProperties />
       <PhilosophySection />
+      <SectionDivider withOrnament className="py-8" />
       <JournalSection />
+      <SectionDivider className="py-8" />
       <NewsletterSection />
       <Footer />
     </div>
@@ -23,6 +31,13 @@ export default function App() {
 
 function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { stiffness: 100, damping: 30 };
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
+  const overlayX = useTransform(springX, (v) => v * 0.5);
+  const overlayY = useTransform(springY, (v) => v * 0.5);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -30,11 +45,24 @@ function HeroSection() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    const x = (clientX - innerWidth / 2) / (innerWidth / 2) * 20;
+    const y = (clientY - innerHeight / 2) / (innerHeight / 2) * 20;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-screen w-full overflow-hidden" onMouseMove={handleMouseMove}>
       {/* Background Image with Parallax */}
       <motion.div
-        style={{ y: scrollY * 0.5 }}
+        style={{ 
+          y: scrollY * 0.5,
+          x: springX,
+          translateY: springY,
+        }}
         className="absolute inset-0"
       >
         <img
@@ -45,6 +73,15 @@ function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-transparent" />
         <div className="absolute inset-0 bg-black/30" />
       </motion.div>
+
+      {/* Gradient Overlay Layer with different parallax */}
+      <motion.div
+        style={{
+          x: overlayX,
+          y: overlayY,
+        }}
+        className="absolute inset-0 bg-gradient-radial from-transparent via-[#0D0D0D]/10 to-[#0D0D0D]/30 pointer-events-none"
+      />
 
       {/* Content */}
       <div className="relative h-full flex flex-col items-center justify-center text-center px-6 z-10">
@@ -66,17 +103,22 @@ function HeroSection() {
           className="w-32 h-[1px] bg-[#C9A86C] mb-12"
         />
 
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="text-4xl md:text-5xl lg:text-6xl text-[#F5F5F0] uppercase max-w-5xl mb-16"
-          style={{ fontFamily: 'var(--font-display)', fontWeight: 300, letterSpacing: '0.15em', lineHeight: '1.1' }}
-        >
-          EXCEPTIONAL STAYS
-          <br />
-          UNFORGETTABLE EXPERIENCES
-        </motion.h1>
+        <h1 className="max-w-5xl mb-16">
+          <SplitText 
+            text="EXCEPTIONAL STAYS" 
+            type="chars" 
+            delay={1.2}
+            className="text-4xl md:text-5xl lg:text-6xl text-[#F5F5F0] uppercase block"
+            style={{ fontFamily: 'var(--font-display)', fontWeight: 300, letterSpacing: '0.15em', lineHeight: '1.1' }}
+          />
+          <SplitText 
+            text="UNFORGETTABLE EXPERIENCES" 
+            type="chars" 
+            delay={1.6}
+            className="text-4xl md:text-5xl lg:text-6xl text-[#F5F5F0] uppercase block"
+            style={{ fontFamily: 'var(--font-display)', fontWeight: 300, letterSpacing: '0.15em', lineHeight: '1.1' }}
+          />
+        </h1>
 
         <motion.button
           initial={{ opacity: 0 }}
@@ -149,17 +191,16 @@ function BrandIntroduction() {
           A refined collection of exceptional residences for the discerning traveller. Whether seeking the vibrant sophistication of London or the sun-drenched tranquility of Provence, each property has been curated to offer an experience that transcends the ordinary.
         </motion.p>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-2xl md:text-3xl text-[#F5F5F0] italic"
-          style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}
-        >
-          Above all, savour the luxury of time
-          <br />
-          slowly passing, fully enjoyed.
-        </motion.p>
+        <BlurReveal delay={0.5}>
+          <p
+            className="text-2xl md:text-3xl text-[#F5F5F0] italic"
+            style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}
+          >
+            Above all, savour the luxury of time
+            <br />
+            slowly passing, fully enjoyed.
+          </p>
+        </BlurReveal>
       </div>
     </section>
   );
@@ -377,28 +418,36 @@ function PhilosophySection() {
 
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
         <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={isInView ? { opacity: 1, scaleX: 1 } : {}}
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5 }}
-          className="w-16 h-[1px] bg-[#C9A86C] mb-12"
-        />
+          className="flex items-center gap-4 mb-12"
+        >
+          <div className="w-16 h-[1px] bg-[#C9A86C]" />
+          <DiamondOrnament size={8} animated />
+          <div className="w-16 h-[1px] bg-[#C9A86C]" />
+        </motion.div>
 
         <motion.blockquote
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-3xl md:text-4xl lg:text-5xl text-[#F5F5F0] italic max-w-4xl mb-12 leading-[1.3]"
+          className="text-3xl md:text-4xl lg:text-5xl italic max-w-4xl mb-12 leading-[1.3]"
           style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}
         >
-          "Above all, savour the luxury of time slowly passing, fully enjoyed."
+          "<GradientText>Above all, savour the luxury of time slowly passing, fully enjoyed.</GradientText>"
         </motion.blockquote>
 
         <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={isInView ? { opacity: 1, scaleX: 1 } : {}}
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="w-16 h-[1px] bg-[#C9A86C] mb-8"
-        />
+          className="flex items-center gap-4 mb-8"
+        >
+          <div className="w-8 h-[1px] bg-[#C9A86C]" />
+          <DiamondOrnament size={6} />
+          <div className="w-8 h-[1px] bg-[#C9A86C]" />
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -604,10 +653,19 @@ function Footer() {
       <div className="max-w-7xl mx-auto">
         {/* Logo & Tagline */}
         <div className="text-center mb-16">
-          <div className="mb-4">
-            <div className="text-[#C9A86C] text-xl tracking-[0.15em] mb-1" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
+          <div className="mb-4 flex items-center justify-center gap-4">
+            <DiamondOrnament size={6} />
+            <motion.div 
+              className="text-[#C9A86C] text-xl tracking-[0.15em] cursor-pointer" 
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}
+              whileHover={{ 
+                textShadow: '0 0 20px rgba(201, 168, 108, 0.6), 0 0 40px rgba(201, 168, 108, 0.3)',
+              }}
+              transition={{ duration: 0.3 }}
+            >
               THE ARIVÉ COLLECTION
-            </div>
+            </motion.div>
+            <DiamondOrnament size={6} />
           </div>
           <p className="text-sm text-[#8A8A8A] italic" style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}>
             Exceptional Stays, Unforgettable Experiences

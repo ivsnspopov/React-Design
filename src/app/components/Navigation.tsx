@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Instagram, Facebook, Linkedin } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useMagneticEffect } from './CustomCursor';
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const magneticButton = useMagneticEffect<HTMLButtonElement>(0.3);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,13 +17,48 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const sectionIds = ['london', 'france', 'properties', 'journal', 'contact'];
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setActiveSection(id);
+              }
+            });
+          },
+          { threshold: 0.3, rootMargin: '-100px 0px -50% 0px' }
+        );
+        observer.observe(element);
+        observers.push(observer);
+      }
+    });
+
+    const handleScrollTop = () => {
+      if (window.scrollY < 100) {
+        setActiveSection('');
+      }
+    };
+    window.addEventListener('scroll', handleScrollTop);
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+      window.removeEventListener('scroll', handleScrollTop);
+    };
+  }, []);
+
   const menuItems = [
-    { label: 'Home', href: '#' },
-    { label: 'London', href: '#london' },
-    { label: 'South of France', href: '#france' },
-    { label: 'Properties', href: '#properties' },
-    { label: 'Journal', href: '#journal' },
-    { label: 'Contact', href: '#contact' }
+    { label: 'Home', href: '#', sectionId: '' },
+    { label: 'London', href: '#london', sectionId: 'london' },
+    { label: 'South of France', href: '#france', sectionId: 'france' },
+    { label: 'Properties', href: '#properties', sectionId: 'properties' },
+    { label: 'Journal', href: '#journal', sectionId: 'journal' },
+    { label: 'Contact', href: '#contact', sectionId: 'contact' }
   ];
 
   return (
@@ -35,22 +73,37 @@ export function Navigation() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-20 py-6 flex items-center justify-between">
           {/* Logo */}
-          <a href="#" className="text-[#C9A86C] text-sm tracking-[0.15em]" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
+          <a 
+            href="#" 
+            className={`text-[#C9A86C] tracking-[0.15em] transition-all duration-300 ${isScrolled ? 'text-xs' : 'text-sm'}`} 
+            style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}
+          >
             THE ARIVÉ COLLECTION
           </a>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
-            {menuItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-xs uppercase tracking-[0.1em] text-[#F5F5F0] hover:text-[#C9A86C] transition-colors"
-                style={{ fontFamily: 'var(--font-body)' }}
-              >
-                {item.label}
-              </a>
-            ))}
+            {menuItems.map((item) => {
+              const isActive = activeSection === item.sectionId || 
+                (item.sectionId === '' && activeSection === '' && window.scrollY < 100);
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="relative text-xs uppercase tracking-[0.1em] transition-colors group"
+                  style={{ 
+                    fontFamily: 'var(--font-body)',
+                    color: isActive ? '#C9A86C' : '#F5F5F0'
+                  }}
+                >
+                  {item.label}
+                  <span 
+                    className="absolute bottom-[-2px] left-0 w-full h-[1px] bg-[#C9A86C] transition-transform duration-300 ease-out origin-left scale-x-0 group-hover:scale-x-100"
+                    style={{ transform: isActive ? 'scaleX(1)' : undefined }}
+                  />
+                </a>
+              );
+            })}
           </div>
 
           {/* Hamburger Menu Button */}
@@ -64,6 +117,9 @@ export function Navigation() {
 
           {/* Book Now Button - Desktop */}
           <button
+            ref={magneticButton.ref}
+            onMouseMove={magneticButton.onMouseMove}
+            onMouseLeave={magneticButton.onMouseLeave}
             className="hidden md:block border border-[#C9A86C] text-[#C9A86C] px-6 py-2 text-xs uppercase tracking-[0.15em] hover:bg-[#C9A86C] hover:text-[#0D0D0D] transition-all duration-300"
             style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}
           >

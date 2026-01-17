@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { LazyImage } from './ImageSkeleton';
 
 interface ArticleCardProps {
   category: string;
@@ -28,11 +29,9 @@ export function ArticleCard({
   return (
     <motion.div
       whileHover={{ y: -4 }}
-      className={`${dimensions[variant]} relative overflow-hidden group cursor-pointer`}
+      className={`${dimensions[variant]} relative overflow-hidden group cursor-pointer border border-transparent hover:border-[#2D2D2D] transition-colors duration-300`}
     >
-      <motion.img
-        whileHover={{ scale: 1.05 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
+      <LazyImage
         src={image}
         alt={title}
         className="w-full h-full object-cover"
@@ -41,8 +40,11 @@ export function ArticleCard({
       <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/50 to-transparent" />
       
       <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 space-y-3">
-        <div className="text-[10px] uppercase tracking-[0.2em] text-[#C9A86C]" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
-          {category}
+        <div className="flex items-center gap-3">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-[#C9A86C]" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
+            {category}
+          </div>
+          <div className="w-8 h-[1px] bg-[#C9A86C]/50" />
         </div>
         
         <h3 className={`${variant === 'featured' ? 'text-3xl' : 'text-xl'} text-[#F5F5F0] leading-[1.3]`} style={{ fontFamily: 'var(--font-display)', fontWeight: 400 }}>

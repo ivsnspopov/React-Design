@@ -1,5 +1,6 @@
 import { Bed, Bath, Users } from 'lucide-react';
 import { motion } from 'motion/react';
+import { LazyImage } from './ImageSkeleton';
 
 interface PropertyCardProps {
   location: string;
@@ -16,7 +17,7 @@ export function PropertyCard({ location, name, city, image, beds, baths, guests,
   return (
     <motion.div
       whileHover={{ y: -8 }}
-      className="flex-shrink-0 w-[420px] group cursor-pointer"
+      className="flex-shrink-0 w-[420px] group cursor-pointer hover:shadow-[0_0_30px_rgba(201,168,108,0.1)] transition-shadow duration-500"
     >
       <div className="relative overflow-hidden mb-6">
         <div className="absolute top-4 left-4 z-10 bg-[#0D0D0D]/70 backdrop-blur-sm px-3 py-1 rounded-full">
@@ -24,13 +25,26 @@ export function PropertyCard({ location, name, city, image, beds, baths, guests,
             {location}
           </span>
         </div>
-        <motion.img
+        <div className="absolute bottom-4 right-4 z-10 bg-[#0D0D0D]/60 backdrop-blur-md border border-[#2D2D2D] px-4 py-2 rounded-sm">
+          <span className="text-sm text-[#C9A86C]" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
+            From {price}/night
+          </span>
+        </div>
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#F5F5F0]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#F5F5F0]/40" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#F5F5F0]/40" />
+        </div>
+        <motion.div
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          src={image}
-          alt={name}
-          className="w-full h-[320px] object-cover"
-        />
+        >
+          <LazyImage
+            src={image}
+            alt={name}
+            className="w-full h-[320px] object-cover"
+          />
+        </motion.div>
       </div>
 
       <div className="space-y-3">
@@ -55,10 +69,6 @@ export function PropertyCard({ location, name, city, image, beds, baths, guests,
             <span className="text-[13px]" style={{ fontFamily: 'var(--font-body)' }}>{guests}</span>
           </div>
         </div>
-
-        <p className="text-base text-[#C9A86C]" style={{ fontFamily: 'var(--font-body)', fontWeight: 500 }}>
-          From {price}/night
-        </p>
       </div>
     </motion.div>
   );
